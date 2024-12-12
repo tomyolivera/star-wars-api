@@ -1,0 +1,21 @@
+services:
+  db-movies:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_DATABASE: $MYSQL_DATABASE
+    ports:
+      - $MYSQL_PORT:$MYSQL_PORT
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - mysql_config:/etc/mysql/conf.d
+  db-adminer:
+    image: adminer
+    restart: always
+    ports:
+      - $ADMINER_PORT:$ADMINER_PORT
+
+volumes:
+  mysql_data:
+  mysql_config:
