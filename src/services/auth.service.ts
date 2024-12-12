@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
+import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { UserService } from './user.service'
 import { Messages } from '@/utils/messages'
 import { AuthDTO, User, UserDTO } from '@/schemas/user.schema'
@@ -17,10 +17,7 @@ export class AuthService {
     const isPasswordValid = await comparePassword(password, user?.password)
 
     if (!isPasswordValid || !user)
-      throw new HttpException(
-        Messages.User.INVALID_CREDENTIALS,
-        HttpStatus.UNAUTHORIZED
-      )
+      throw new UnauthorizedException(Messages.User.INVALID_CREDENTIALS)
 
     // If token is expired, generate a new one, otherwise return the current one
     return user.tokenExp < new Date()

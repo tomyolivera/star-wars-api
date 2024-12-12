@@ -29,7 +29,7 @@ export class AuthController {
   @Post('login')
   public async login(@Body() user: AuthDTO, @Res() res: Response) {
     const token = await this.authService.login(user)
-    return res.status(HttpStatus.OK).json(token)
+    return res.status(HttpStatus.OK).json({ token })
   }
 
   @ApiOperation({ summary: 'Register a new user' })
