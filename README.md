@@ -8,17 +8,15 @@ Instrucciones necesarias para configurar y levantar el proyecto de manera local.
 - **[Instalación](#instalación)**
 - **[Levantar Base de Datos y la aplicación](#levantar-base-de-datos-y-la-aplicación)**
 - **[Configuración](#configuración)**
-- **[Endpoints disponibles](#endpoints-disponibles)**
+- **[Documentación](#documentación)**
 - **[Popular la tabla de películas](#popular-la-tabla-de-películas)**
 - **[Acceder desde la nube](#acceder-desde-la-nube)**
 
 ## Requisitos del Proyecto
 
 - Node.js (LTS)
-- npm (Node Package Manager)
-
-Node.js (versión recomendada: LTS)
-npm (Node Package Manager)
+- npm (Node Package Manager) u otro gestor de paquetes como pnpm ó yarn.
+- Docker y Docker Compose
 
 ### Instalación
 
@@ -63,7 +61,7 @@ npm run start
 Ahora ya debería estar disponible la API en `http://localhost:PUERTO`
 El PUERTO va a estar configurado en el archivo .env y por defecto es el 5000.
 
-### Endpoints disponibles
+### Documentación
 
 Vas a poder acceder a la documentación de la API en
 `http://localhost:PUERTO/docs`
