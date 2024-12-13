@@ -7,7 +7,7 @@ import { Movie } from '@/schemas/movie.schema'
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'mysql',
+      type: 'postgres',
       host: EnvVars.DB_HOST || 'localhost',
       port: EnvVars.DB_PORT || 5432,
       username: EnvVars.DB_USER || 'root',
