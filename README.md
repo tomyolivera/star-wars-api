@@ -70,3 +70,8 @@ Vas a poder acceder a la documentación de la API en
 ### Popular la tabla de películas
 
 Para popular la tabla `movies`, necesitás primero crear un usuario con el `role` de `admin`, autenticarte con su `username` y `password` y luego ejecutar el endpoint `GET /movies/seed`
+
+## Acceder desde la nube
+
+Este proyecto está deployado en `Railway` por un lado para hostear la API y en `Supabase` para hostear la base de datos.
+La URL para acceder a la API es: `https://star-wars-api-production-8548.up.railway.app/`
