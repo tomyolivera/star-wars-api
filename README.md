@@ -1,4 +1,4 @@
-# API en NestJS
+# Star Wars API
 
 Instrucciones necesarias para configurar y levantar el proyecto de manera local.
 
