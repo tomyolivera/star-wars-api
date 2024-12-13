@@ -27,7 +27,7 @@ git clone https://github.com/tomyolivera/star-wars-api.git
 cd star-wars-api
 ```
 
-Instalá las dependencias necesarias con el siguiente comandos:
+Instalá las dependencias necesarias con el siguiente comando:
 
 ```bash
 npm install
