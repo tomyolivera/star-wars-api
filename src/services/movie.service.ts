@@ -33,7 +33,7 @@ export class MovieService {
   }
 
   async findOne(id: number): Promise<Movie> {
-    const movie = this.moviesRepository.findOneBy({ id })
+    const movie = await this.moviesRepository.findOneBy({ id })
 
     if (!movie) throw new BadRequestException(Messages.Movie.NOT_FOUND)
 
