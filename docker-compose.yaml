@@ -1,15 +1,15 @@
 services:
   db-movies:
-    image: mysql:latest
+    image: postgres:latest
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
-      MYSQL_DATABASE: $MYSQL_DATABASE
+      POSTGRES_USER: $DB_USER
+      POSTGRES_PASSWORD: $DB_PASSWORD
+      POSTGRES_DB: $DB_NAME
     ports:
-      - $MYSQL_PORT:$MYSQL_PORT
+      - $DB_PORT:$DB_PORT
     volumes:
-      - mysql_data:/var/lib/mysql
-      - mysql_config:/etc/mysql/conf.d
+      - postgres_data:/var/lib/postgresql/data
   db-adminer:
     image: adminer
     restart: always
@@ -17,5 +17,4 @@ services:
       - $ADMINER_PORT:$ADMINER_PORT
 
 volumes:
-  mysql_data:
-  mysql_config:
+  postgres_data:
