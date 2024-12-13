@@ -28,9 +28,10 @@ export class UserService {
       where: [{ username: column }, { token: column }]
     })
 
-    if (!withPassword) user.password = null
     if (!user && withErrorIfFound)
       throw new BadRequestException(Messages.User.NOT_FOUND)
+
+    if (!withPassword) user.password = null
 
     return user
   }

@@ -4,8 +4,7 @@ import {
   Controller,
   HttpStatus,
   Post,
-  Res,
-  ValidationPipe
+  Res
 } from '@nestjs/common'
 import { Response } from 'express'
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
@@ -35,13 +34,11 @@ export class AuthController {
   @ApiOperation({ summary: 'Register a new user' })
   @ApiOkResponse({ type: User })
   @Post('register')
-  public async register(
-    @Body(new ValidationPipe()) user: UserDTO,
-    @Res() res: Response
-  ) {
+  public async register(@Body() user: UserDTO, @Res() res: Response) {
     const userExists = await this.userService.findOne({
       column: user.username,
-      withErrorIfFound: false
+      withErrorIfFound: false,
+      withPassword: true
     })
     if (userExists) throw new BadRequestException(Messages.User.ALREADY_EXISTS)
 
