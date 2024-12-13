@@ -9,6 +9,7 @@ Instrucciones necesarias para configurar y levantar el proyecto de manera local.
 - **[Levantar Base de Datos y la aplicación](#levantar-base-de-datos-y-la-aplicación)**
 - **[Configuración](#configuración)**
 - **[Endpoints disponibles](#endpoints-disponibles)**
+- **[Popular la tabla de movies](#popular-la-tabla-de-movies)**
 
 ## Requisitos del Proyecto
 
@@ -66,6 +67,6 @@ El PUERTO va a estar configurado en el archivo .env y por defecto es el 5000.
 Vas a poder acceder a la documentación de la API en
 `http://localhost:PUERTO/docs`
 
-### Popular la tabla de movies
+### Popular la tabla de películas
 
 Para popular la tabla `movies`, necesitás primero crear un usuario con el `role` de `admin`, autenticarte con su `username` y `password` y luego ejecutar el endpoint `GET /movies/seed`
