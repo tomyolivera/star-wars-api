@@ -40,8 +40,8 @@ export class MovieService {
     return movie
   }
 
-  create(Movie: Movie): Promise<Movie> {
-    return this.moviesRepository.save(Movie)
+  create(movie: Movie): Promise<Movie> {
+    return this.moviesRepository.save({ ...movie, id: null })
   }
 
   async update(movie: Movie): Promise<Movie> {
