@@ -5,12 +5,15 @@ import { AppModule } from '../src/app.module'
 import { Messages } from '@/utils/messages'
 import { MovieService } from '@/services/movie.service'
 import { AuthService } from '@/services/auth.service'
+import { UserRole } from '@/types/user-role.types'
+import { UserService } from '@/services/user.service'
 
 describe('Movies API (e2e)', () => {
   let app: INestApplication
   let jwtToken: string
   let movieService: MovieService
   let authService: AuthService
+  let userService: UserService
 
   beforeAll(async () => {
     const moduleFixture = await Test.createTestingModule({
@@ -20,6 +23,7 @@ describe('Movies API (e2e)', () => {
     app = moduleFixture.createNestApplication()
     movieService = moduleFixture.get<MovieService>(MovieService)
     authService = moduleFixture.get<AuthService>(AuthService)
+    userService = moduleFixture.get<UserService>(UserService)
     await app.init()
   })
 
@@ -28,15 +32,51 @@ describe('Movies API (e2e)', () => {
   })
 
   it('POST /auth/login should return 401 Unauthorized', async () => {
+    const user = {
+      username: 'sometestignuser',
+      password: 'withotherpassword'
+    }
     const response = await request(app.getHttpServer())
       .post('/auth/login')
-      .send({ username: 'sometestignuser', password: 'withotherpassword' })
+      .send(user)
+
+    const auth = await authService.login(user)
+    if (!auth) {
+      expect(response.body.message).toBe(Messages.User.INVALID_CREDENTIALS)
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST)
+      return
+    }
 
     expect(response.status).toBe(HttpStatus.BAD_REQUEST)
   })
 
   // Common User
   describe('User', () => {
+    it('POST /auth/register should create user', async () => {
+      const user = {
+        username: 'user',
+        password: '12345',
+        role: UserRole.USER
+      }
+
+      const userFound = await userService.findOne({ column: user.username })
+
+      const response = await request(app.getHttpServer())
+        .post('/auth/register')
+        .send(user)
+
+      if (userFound) {
+        expect(response.body.message).toBe(Messages.User.ALREADY_EXISTS)
+        expect(response.status).toBe(HttpStatus.BAD_REQUEST)
+        return
+      }
+
+      await authService.register(user)
+
+      expect(response.status).toBe(HttpStatus.CREATED)
+      expect(response.body.username).toBe(user.username)
+    })
+
     it('POST /auth/login should authenticate and return JWT User token', async () => {
       const user = {
         username: 'user',
@@ -47,8 +87,10 @@ describe('Movies API (e2e)', () => {
         .send(user)
 
       const auth = await authService.login(user)
-      if (!auth)
-        return expect(response.body.statusCode).toBe(HttpStatus.BAD_REQUEST)
+      if (!auth) {
+        expect(response.status).toBe(HttpStatus.BAD_REQUEST)
+        return
+      }
 
       expect(response.status).toBe(HttpStatus.OK)
       expect(response.body.token).toBeDefined()
@@ -96,6 +138,31 @@ describe('Movies API (e2e)', () => {
 
   // Admin
   describe('Admin', () => {
+    it('POST /auth/register should create admin', async () => {
+      const user = {
+        username: 'admin',
+        password: '12345',
+        role: UserRole.ADMIN
+      }
+
+      const userFound = await userService.findOne({ column: user.username })
+
+      const response = await request(app.getHttpServer())
+        .post('/auth/register')
+        .send(user)
+
+      if (userFound) {
+        expect(response.body.message).toBe(Messages.User.ALREADY_EXISTS)
+        expect(response.status).toBe(HttpStatus.BAD_REQUEST)
+        return
+      }
+
+      await authService.register(user)
+
+      expect(response.status).toBe(HttpStatus.CREATED)
+      expect(response.body.username).toBe(user.username)
+    })
+
     it('POST /auth/login should authenticate and return JWT Admin token', async () => {
       const user = {
         username: 'admin',
@@ -114,6 +181,14 @@ describe('Movies API (e2e)', () => {
       jwtToken = response.body.token
     })
 
+    it('GET /seed should seed the database', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/movies/seed')
+        .set('Authorization', `Bearer ${jwtToken}`)
+
+      expect(response.status).toBe(HttpStatus.OK)
+    })
+
     it('GET /movies should return all movies', async () => {
       const response = await request(app.getHttpServer())
         .get('/movies')
@@ -126,6 +201,22 @@ describe('Movies API (e2e)', () => {
       const response = await request(app.getHttpServer()).post('/movies')
 
       expect(response.status).toBe(HttpStatus.UNAUTHORIZED)
+    })
+
+    it('GET /movies/:id should return movie with ID 1', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/movies/1')
+        .set('Authorization', `Bearer ${jwtToken}`)
+
+      const movie = await movieService.findOne(1)
+      if (!movie) {
+        expect(response.body.message).toBe(Messages.Movie.NOT_FOUND)
+        expect(response.status).toBe(HttpStatus.BAD_REQUEST)
+        return
+      }
+
+      expect(response.status).toBe(HttpStatus.OK)
+      expect(response.body.title).toBe(movie.title)
     })
 
     it('POST /movies create a movie', async () => {
@@ -200,7 +291,7 @@ describe('Movies API (e2e)', () => {
       expect(response.body.title).toBe(mockedMovie.title)
     })
 
-    it('PUT /movies/:id should update a movie with ID 5 if found', async () => {
+    it('PUT /movies/:id should update a movie with ID 5', async () => {
       const mockedUpdatedMovie = {
         title: 'Updated movie',
         episode_id: 4,
@@ -269,21 +360,27 @@ describe('Movies API (e2e)', () => {
         .send(mockedUpdatedMovie)
 
       const movieFound = await movieService.findOne(5)
-      if (!movieFound)
-        return expect(response.body.statusCode).toBe(HttpStatus.BAD_REQUEST)
+      if (!movieFound) {
+        expect(response.body.message).toBe(Messages.Movie.NOT_FOUND)
+        expect(response.status).toBe(HttpStatus.BAD_REQUEST)
+        return
+      }
 
       expect(response.status).toBe(HttpStatus.OK)
       expect(response.body.title).toBe(mockedUpdatedMovie.title)
     })
 
-    it('DELETE /movies/:id should delete a movie with ID 6 if found', async () => {
+    it('DELETE /movies/:id should delete a movie with ID 6', async () => {
       const response = await request(app.getHttpServer())
-        .delete('/movies/9')
+        .delete('/movies/6')
         .set('Authorization', `Bearer ${jwtToken}`)
 
       const movieFound = await movieService.findOne(6)
-      if (!movieFound)
-        return expect(response.body.statusCode).toBe(HttpStatus.BAD_REQUEST)
+      if (!movieFound) {
+        expect(response.body.message).toBe(Messages.Movie.NOT_FOUND)
+        expect(response.status).toBe(HttpStatus.BAD_REQUEST)
+        return
+      }
 
       expect(response.status).toBe(HttpStatus.OK)
       expect(response.body).toBe(Messages.Movie.DELETED)

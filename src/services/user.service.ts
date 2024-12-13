@@ -1,11 +1,10 @@
 import { FindOneOptionsUser, User } from '@/schemas/user.schema'
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository, UpdateResult } from 'typeorm'
 import { JwtService } from '@nestjs/jwt'
 import { JwtPayload } from '@/types/jwt.types'
 import EnvVars from '@/config/vars'
-import { Messages } from '@/utils/messages'
 
 @Injectable()
 export class UserService {
@@ -21,16 +20,13 @@ export class UserService {
 
   async findOne({
     column,
-    withPassword = false,
-    withErrorIfFound = true
+    withPassword = false
   }: FindOneOptionsUser): Promise<User> {
     const user = await this.usersRepository.findOne({
       where: [{ username: column }, { token: column }]
     })
 
-    if (!user && withErrorIfFound)
-      throw new BadRequestException(Messages.User.NOT_FOUND)
-
+    if (!user) return null
     if (!withPassword) user.password = null
 
     return user

@@ -1,9 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { DeleteResult, Repository } from 'typeorm'
 import { Movie } from '@/schemas/movie.schema'
 import axios from 'axios'
-import { Messages } from '@/utils/messages'
 
 @Injectable()
 export class MovieService {
@@ -32,12 +31,8 @@ export class MovieService {
     return this.moviesRepository.find()
   }
 
-  async findOne(id: number): Promise<Movie> {
-    const movie = await this.moviesRepository.findOneBy({ id })
-
-    if (!movie) throw new BadRequestException(Messages.Movie.NOT_FOUND)
-
-    return movie
+  findOne(id: number): Promise<Movie> {
+    return this.moviesRepository.findOneBy({ id })
   }
 
   create(movie: Movie): Promise<Movie> {

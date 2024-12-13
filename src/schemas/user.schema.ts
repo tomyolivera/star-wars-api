@@ -57,5 +57,4 @@ export class User extends UserDTO {
 export interface FindOneOptionsUser {
   column: string
   withPassword?: boolean
-  withErrorIfFound?: boolean
 }

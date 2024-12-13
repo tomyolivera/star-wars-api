@@ -1,6 +1,5 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { UserService } from './user.service'
-import { Messages } from '@/utils/messages'
 import { AuthDTO, User, UserDTO } from '@/schemas/user.schema'
 import { comparePassword, hashPassword } from '@/utils/hash'
 
@@ -14,10 +13,12 @@ export class AuthService {
       withPassword: true
     })
 
-    const isPasswordValid = await comparePassword(password, user?.password)
+    const isPasswordValid = await comparePassword(
+      password,
+      user?.password || ''
+    )
 
-    if (!isPasswordValid || !user)
-      throw new UnauthorizedException(Messages.User.INVALID_CREDENTIALS)
+    if (!isPasswordValid || !user) return null
 
     // If token is expired, generate a new one, otherwise return the current one
     return user.tokenExp < new Date()
@@ -26,6 +27,9 @@ export class AuthService {
   }
 
   async register(user: UserDTO): Promise<User> {
+    const userExists = await this.userService.findOne({ column: user.username })
+    if (userExists) return null
+
     const hashedPassword = await hashPassword(user.password)
 
     const userCreated = await this.userService.create({

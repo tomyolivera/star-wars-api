@@ -57,6 +57,7 @@ export class MovieController {
     @Res() res: Response
   ) {
     const movie = await this.movieService.findOne(id)
+    if (!movie) throw new BadRequestException(Messages.Movie.NOT_FOUND)
     return res.status(HttpStatus.OK).json(movie)
   }
 
