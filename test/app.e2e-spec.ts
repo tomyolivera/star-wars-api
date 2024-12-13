@@ -31,23 +31,31 @@ describe('Movies API (e2e)', () => {
     await app.close()
   })
 
-  it('POST /auth/login should return 401 Unauthorized', async () => {
-    const user = {
-      username: 'sometestignuser',
-      password: 'withotherpassword'
-    }
-    const response = await request(app.getHttpServer())
-      .post('/auth/login')
-      .send(user)
+  describe('Not Authenticated', () => {
+    it('POST /auth/login should return 401 Unauthorized with invalid credentials', async () => {
+      const user = {
+        username: 'sometestignuser',
+        password: 'withotherpassword'
+      }
+      const response = await request(app.getHttpServer())
+        .post('/auth/login')
+        .send(user)
 
-    const auth = await authService.login(user)
-    if (!auth) {
-      expect(response.body.message).toBe(Messages.User.INVALID_CREDENTIALS)
+      const auth = await authService.login(user)
+      if (!auth) {
+        expect(response.body.message).toBe(Messages.User.INVALID_CREDENTIALS)
+        expect(response.status).toBe(HttpStatus.BAD_REQUEST)
+        return
+      }
+
       expect(response.status).toBe(HttpStatus.BAD_REQUEST)
-      return
-    }
+    })
 
-    expect(response.status).toBe(HttpStatus.BAD_REQUEST)
+    it('GET /movies should return 401 Unauthorized', async () => {
+      const response = await request(app.getHttpServer()).get('/movies')
+
+      expect(response.status).toBe(HttpStatus.UNAUTHORIZED)
+    })
   })
 
   // Common User
@@ -103,12 +111,6 @@ describe('Movies API (e2e)', () => {
         .set('Authorization', `Bearer ${jwtToken}`)
 
       expect(response.status).toBe(HttpStatus.OK)
-    })
-
-    it('GET /movies should return 401 Unauthorized', async () => {
-      const response = await request(app.getHttpServer()).get('/movies')
-
-      expect(response.status).toBe(HttpStatus.UNAUTHORIZED)
     })
 
     it('POST /movies should return 403 Forbbiden', async () => {
@@ -195,12 +197,6 @@ describe('Movies API (e2e)', () => {
         .set('Authorization', `Bearer ${jwtToken}`)
 
       expect(response.status).toBe(HttpStatus.OK)
-    })
-
-    it('GET /movies should return 401 Unauthorized', async () => {
-      const response = await request(app.getHttpServer()).post('/movies')
-
-      expect(response.status).toBe(HttpStatus.UNAUTHORIZED)
     })
 
     it('GET /movies/:id should return movie with ID 1', async () => {
