@@ -23,14 +23,14 @@ npm (Node Package Manager)
 Cloná este repositorio a tu máquina local:
 
 ```bash
-$ git clone https://github.com/tomyolivera/star-wars-api.git
-$ cd star-wars-api
+git clone https://github.com/tomyolivera/star-wars-api.git
+cd star-wars-api
 ```
 
 Instalá las dependencias necesarias con el siguiente comandos:
 
 ```bash
-$ npm install
+npm install
 ```
 
 Configurá las variables de entorno. Duplicá el archivo .env.example y nombralo como .env:
@@ -40,20 +40,20 @@ Configurá las variables de entorno. Duplicá el archivo .env.example y nombralo
 Para utilizar Docker, necesitás tener instalado Docker y Docker Compose en tu máquina. Podés verificar su instalación con los siguientes comandos:
 
 ```bash
-$ docker --version
-$ docker-compose --version
+docker --version
+docker-compose --version
 ```
 
 Dentro del directorio raíz del proyecto, ejecutá el siguiente comando para levantar la base de datos MySQL:
 
 ```bash
-$ docker-compose up -d
+docker-compose up -d
 ```
 
 Luego ejecutá el siguiente comando para levantar la API:
 
 ```bash
-$ npm run start
+npm run start
 ```
 
 ### Configuración
