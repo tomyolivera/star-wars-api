@@ -14,6 +14,6 @@ async function bootstrap() {
   app.setGlobalPrefix('api')
   swaggerBuilder(app)
 
-  await app.listen(EnvVars.PORT)
+  await app.listen(EnvVars.PORT || 5000)
 }
 bootstrap()
