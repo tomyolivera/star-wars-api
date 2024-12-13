@@ -9,7 +9,8 @@ Instrucciones necesarias para configurar y levantar el proyecto de manera local.
 - **[Levantar Base de Datos y la aplicación](#levantar-base-de-datos-y-la-aplicación)**
 - **[Configuración](#configuración)**
 - **[Endpoints disponibles](#endpoints-disponibles)**
-- **[Popular la tabla de movies](#popular-la-tabla-de-movies)**
+- **[Popular la tabla de películas](#popular-la-tabla-de-películas)**
+- **[Acceder desde la nube](#acceder-desde-la-nube)**
 
 ## Requisitos del Proyecto
 
